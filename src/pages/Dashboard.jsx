@@ -1,8 +1,8 @@
 /* ./pasanaq/src/pages/Dashboard.jsx: */
 
 import { useAuth } from "../context/AuthContext"
-import CreatePasanaqForm from "../components/CreatePasanaqForm"
-import PasanaqList from "../components/PasanaqList"
+import CreatePasanaqForm from "../components/pasanaq/CreatePasanaqForm"
+import PasanaqList from "../components/pasanaq/PasanaqList"
 export default function Dashboard() {
 
   const { user, logout } = useAuth()

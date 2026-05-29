@@ -1,14 +1,10 @@
 // ./pasanaq/src/components/PasanaqList.jsx:
 
 import { useEffect, useState } from "react"
-
-import { supabase } from "../services/supabase"
-
-import { useAuth } from "../context/AuthContext"
-
+import { supabase } from "../../services/supabase"
+import { useAuth } from "../../context/AuthContext"
 import { Link } from "react-router-dom"
-
-import { formatCurrency } from "../utils/currency"
+import { formatCurrency } from "../../utils/currency"
 
 export default function PasanaqList() {
 

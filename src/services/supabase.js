@@ -1,4 +1,4 @@
-/* ./pasanaq/src/styles/index.css: */
+/* ./pasanaq/src/services/supabase.js: */
 
 import { createClient } from "@supabase/supabase-js"
 

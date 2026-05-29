@@ -1,13 +1,9 @@
 // ./pasanaq/src/components/CreatePasanaqForm.jsx:
 
 import { useState } from "react"
-
 import { useNavigate } from "react-router-dom"
-
-import { supabase } from "../services/supabase"
-
-import { useAuth } from "../context/AuthContext"
-
+import { supabase } from "../../services/supabase"
+import { useAuth } from "../../context/AuthContext"
 import toast from "react-hot-toast"
 
 export default function CreatePasanaqForm() {
