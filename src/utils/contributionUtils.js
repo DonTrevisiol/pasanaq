@@ -1,8 +1,9 @@
 // ./pasanaq/src/utils/contributionUtils.js
 
 export function groupContributions({
+
   contributions,
-  payments,
+
   contributionAmount,
 }) {
 
@@ -36,49 +37,43 @@ export function groupContributions({
         }
 
         const amount =
+
           Number(
             contribution.amount
+          )
+
+        const paidAmount =
+
+          Number(
+            contribution.paid_amount || 0
           )
 
         acc[userId]
           .totalAmount += amount
 
         acc[userId]
-          .totalSlots += 1
-
-        const userPayments =
-
-          payments.filter(
-            (payment) =>
-
-              payment.user_id ===
-              userId
-          )
-
-        const totalPaid =
-
-          userPayments.reduce(
-
-            (sum, payment) =>
-
-              sum +
-              Number(payment.amount),
-
-            0
-          )
+          .paidAmount +=
+            paidAmount
 
         acc[userId]
-          .paidAmount =
-            totalPaid
+          .totalSlots =
+
+          acc[userId]
+            .totalAmount /
+
+          Number(
+            contributionAmount
+          )
 
         acc[userId]
           .paidSlots =
 
-            totalPaid /
+          acc[userId]
+            .paidAmount /
 
-            Number(
-              contributionAmount
-            )
+          Number(
+            contributionAmount
+          )
 
         return acc
 

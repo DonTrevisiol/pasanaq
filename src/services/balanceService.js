@@ -60,71 +60,94 @@ export async function consumeBalance(
     throw contributionsError
   }
 
-  // CONSUMIR BALANCE
-
   for (
-    const contribution
-    of pendingContributions
-  ) {
+  const contribution
+  of pendingContributions
+) {
 
-    if (balance <= 0) break
+  if (balance <= 0) break
 
-    const amount =
+  const amount =
 
-      Number(
-        contribution.amount
+    Number(
+      contribution.amount
+    )
+
+  const alreadyPaid =
+
+    Number(
+      contribution.paid_amount || 0
+    )
+
+  const remaining =
+
+    amount - alreadyPaid
+
+  // YA ESTABA PAGADO
+
+  if (remaining <= 0) {
+
+    continue
+  }
+
+  // PAGO COMPLETO
+
+  if (balance >= remaining) {
+
+    const newPaidAmount =
+
+      alreadyPaid + remaining
+
+    await supabase
+
+      .from("contributions")
+
+      .update({
+
+        status: "paid",
+
+        paid_amount:
+          newPaidAmount,
+
+        paid_at:
+          new Date()
+            .toISOString(),
+      })
+
+      .eq(
+        "id",
+        contribution.id
       )
 
-    // PAGO COMPLETO
-
-    if (balance >= amount) {
-
-      await supabase
-
-        .from("contributions")
-
-        .update({
-
-          status: "paid",
-
-          paid_amount: amount,
-
-          paid_at:
-            new Date()
-              .toISOString(),
-        })
-
-        .eq(
-          "id",
-          contribution.id
-        )
-
-      balance -= amount
-
-    }
-
-    // PAGO PARCIAL
-
-    else {
-
-      await supabase
-
-        .from("contributions")
-
-        .update({
-
-          paid_amount:
-            balance,
-        })
-
-        .eq(
-          "id",
-          contribution.id
-        )
-
-      balance = 0
-    }
+    balance -= remaining
   }
+
+  // PAGO PARCIAL
+
+  else {
+
+    const newPaidAmount =
+
+      alreadyPaid + balance
+
+    await supabase
+
+      .from("contributions")
+
+      .update({
+
+        paid_amount:
+          newPaidAmount,
+      })
+
+      .eq(
+        "id",
+        contribution.id
+      )
+
+    balance = 0
+  }
+}
 
   // GUARDAR BALANCE RESTANTE
 

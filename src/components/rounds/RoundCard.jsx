@@ -64,7 +64,6 @@ const groupedContributions =
 
   groupContributions({
     contributions,
-    payments,
     contributionAmount: pasanaq.contribution_amount,
   })
 

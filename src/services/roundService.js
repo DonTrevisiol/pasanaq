@@ -170,7 +170,7 @@ export async function closeRound({
           pasanaqData
             .contribution_amount
           *
-          member.member_number,
+          Number(member.member_number || 1),
 
         status: "pending",
       })

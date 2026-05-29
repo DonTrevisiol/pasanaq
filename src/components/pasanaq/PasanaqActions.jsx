@@ -98,28 +98,30 @@ export default function PasanaqActions({
 
     const contributions =
 
-  members.flatMap(
+  members.map(
 
-    (member) =>
+    (member) => ({
 
-      Array.from(
+      round_id:
+        roundData.id,
 
-        {
-          length:
-            member.member_number || 1
-        }).map(() => ({
+      user_id:
+        member.user_id,
 
-          round_id:
-            roundData.id,
+      amount:
 
-          user_id:
-            member.user_id,
+        Number(
+          pasanaq.contribution_amount
+        ) *
 
-          amount:
-            pasanaq.contribution_amount,
+        Number(
+          member.member_number || 1
+        ),
 
-          status: "pending",
-        }))
+      paid_amount: 0,
+
+      status: "pending",
+    })
   )
 
 
