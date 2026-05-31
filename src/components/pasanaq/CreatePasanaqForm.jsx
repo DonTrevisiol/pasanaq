@@ -5,6 +5,9 @@ import { useNavigate } from "react-router-dom"
 import { supabase } from "../../services/supabase"
 import { useAuth } from "../../context/AuthContext"
 import toast from "react-hot-toast"
+import PasanaqBasicFields from "./PasanaqBasicFields"
+import PasanaqContributionFields from "./PasanaqContributionFields"
+import { createPasanaq } from "../../services/createPasanaqService"
 
 export default function CreatePasanaqForm() {
 
@@ -29,96 +32,16 @@ export default function CreatePasanaqForm() {
 
     event.preventDefault()
 
-    const {
-      data,
-      error
-    } = await supabase
-
-      .from("pasanaqs")
-
-      .insert({
+    const pasanaq =
+      await createPasanaq({
         name,
         description,
-        contribution_amount: amount,
+        amount,
         currency,
         frequency,
-        created_by: user.id,
-        status: "draft",
+        userId:
+          user.id,
       })
-
-      .select()
-
-      .single()
-
-    if (error) {
-
-      console.error(error)
-
-      toast.error(error.message)
-
-      return
-    }
-
-    const pasanaq = data
-
-    const {
-      error: memberError
-    } = await supabase
-
-      .from("pasanaq_members")
-
-      .insert({
-        pasanaq_id: pasanaq.id,
-        user_id: user.id,
-        role: "owner",
-        position: 1,
-      })
-
-    if (memberError) {
-
-      console.error(memberError)
-
-      toast.error(memberError.message)
-
-      return
-    }
-
-    const {
-  data: profileData
-} = await supabase
-
-  .from("profiles")
-
-  .select("full_name")
-
-  .eq("id", user.id)
-
-  .single()
-
-const userName =
-
-  profileData?.full_name
-  || "Un usuario"
-
-await supabase
-
-  .from("activities")
-
-  .insert({
-
-    pasanaq_id:
-      pasanaq.id,
-
-    user_id:
-      user.id,
-
-    type:
-      "pasanaq_created",
-
-    message:
-      `${userName} creó el Pasanaq ${pasanaq.name}`,
-
-  })
 
     toast.success("Pasanaq creado")
 
@@ -149,147 +72,24 @@ await supabase
 
       </h2>
 
-      <input
-        type="text"
-        placeholder="Nombre del grupo"
-        value={name}
-        onChange={(e) =>
-          setName(e.target.value)
-        }
-        className="
-          w-full
-          border
-          border-silver
-          rounded-xl
-          px-4
-          py-3
-        "
+      <PasanaqBasicFields
+        name={name}
+        setName={setName}
+
+        description={description}
+        setDescription={setDescription}
       />
 
-      <textarea
-        placeholder="Descripción"
-        value={description}
-        onChange={(e) =>
-          setDescription(e.target.value)
-        }
-        className="
-          w-full
-          border
-          border-silver
-          rounded-xl
-          px-4
-          py-3
-        "
+      <PasanaqContributionFields
+        amount={amount}
+        setAmount={setAmount}
+
+        currency={currency}
+        setCurrency={setCurrency}
+
+        frequency={frequency}
+        setFrequency={setFrequency}
       />
-
-      <input
-        type="number"
-        placeholder="Monto por aporte"
-        value={amount}
-        onChange={(e) =>
-          setAmount(e.target.value)
-        }
-        className="
-          w-full
-          border
-          border-silver
-          rounded-xl
-          px-4
-          py-3
-        "
-      />
-
-      <div className="mt-5">
-
-  <label
-    className="
-      block
-      font-semibold
-      mb-2
-      text-dark
-    "
-  >
-
-    Moneda
-
-  </label>
-
-  <select
-
-    value={currency}
-
-    onChange={(e) =>
-      setCurrency(e.target.value)
-    }
-
-    className="
-      w-full
-      border
-      border-silver
-      rounded-xl
-      p-4
-      bg-white
-    "
-  >
-
-    <option value="BOB">
-      Bolivianos (Bs)
-    </option>
-
-    <option value="USD">
-      Dólares ($)
-    </option>
-
-    <option value="ARS">
-      Pesos Argentinos
-    </option>
-
-    <option value="PEN">
-      Soles Peruanos
-    </option>
-
-    <option value="CLP">
-      Pesos Chilenos
-    </option>
-
-    <option value="EUR">
-      Euros (€)
-    </option>
-
-  </select>
-
-</div>
-
-
-
-      <select
-        value={frequency}
-        onChange={(e) =>
-          setFrequency(e.target.value)
-        }
-        className="
-          w-full
-          border
-          border-silver
-          rounded-xl
-          px-4
-          py-3
-        "
-      >
-
-        <option value="daily">
-          Diario
-        </option>
-
-        <option value="weekly">
-          Semanal
-        </option>
-
-        <option value="monthly">
-          Mensual
-        </option>
-
-      </select>
 
       <button
         type="submit"
