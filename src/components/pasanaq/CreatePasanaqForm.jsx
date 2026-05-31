@@ -6,6 +6,7 @@ import { supabase } from "../../services/supabase"
 import { useAuth } from "../../context/AuthContext"
 import toast from "react-hot-toast"
 import PasanaqBasicFields from "./PasanaqBasicFields"
+import MemberNumberSelector from "./MemberNumberSelector"
 import PasanaqContributionFields from "./PasanaqContributionFields"
 import { createPasanaq } from "../../services/createPasanaqService"
 
@@ -28,6 +29,9 @@ export default function CreatePasanaqForm() {
   const [currency, setCurrency] =
     useState("BOB")
 
+  const [selectedNumbers, setSelectedNumbers] =
+    useState(1)
+
   async function handleCreate(event) {
 
     event.preventDefault()
@@ -41,6 +45,7 @@ export default function CreatePasanaqForm() {
         frequency,
         userId:
           user.id,
+        selectedNumbers,
       })
 
     toast.success("Pasanaq creado")
@@ -89,6 +94,12 @@ export default function CreatePasanaqForm() {
 
         frequency={frequency}
         setFrequency={setFrequency}
+      />
+
+      <MemberNumberSelector
+        selectedNumbers={selectedNumbers}
+        setSelectedNumbers={setSelectedNumbers}
+        pasanaq={{contribution_amount: amount, currency, frequency}}
       />
 
       <button

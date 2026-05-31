@@ -1,18 +1,9 @@
 // ./pasanaq/src/pages/InvitePage.jsx
 
-import {
-  useEffect,
-  useState
-} from "react"
-
-import {
-  useParams,
-  useNavigate
-} from "react-router-dom"
-
-import { supabase }
-from "../services/supabase"
-
+import { useEffect, useState } from "react"
+import { useParams, useNavigate } from "react-router-dom"
+import { supabase } from "../services/supabase"
+import MemberNumberSelector from "../components/pasanaq/MemberNumberSelector"
 import toast from "react-hot-toast"
 
 export default function InvitePage() {
@@ -34,15 +25,6 @@ export default function InvitePage() {
 
   const [selectedNumbers, setSelectedNumbers] =
     useState(1)
-
-  const totalContribution =
-  selectedNumbers *
-  (pasanaq?.contribution_amount || 0)
-  const frequencyLabel = {
-      daily: "día",
-      weekly: "semana",
-      monthly: "mes",
-}[pasanaq?.frequency]
 
   useEffect(() => {
 
@@ -107,6 +89,22 @@ export default function InvitePage() {
     setLoading(false)
   }
 
+  const totalContribution =
+
+    selectedNumbers *
+
+    (pasanaq?.contribution_amount || 0)
+
+  const frequencyLabel = {
+
+    daily: "día",
+
+    weekly: "semana",
+
+    monthly: "mes",
+
+  }[pasanaq?.frequency]
+
   async function handleJoin() {
 
   const confirmed =
@@ -139,6 +137,39 @@ Presiona "Aceptar" solo si estás completamente seguro. ⚠️`
 
     return
   }
+
+  const {
+  data: existingMember
+} = await supabase
+
+  .from("pasanaq_members")
+
+  .select("id")
+
+  .eq(
+    "pasanaq_id",
+    pasanaq.id
+  )
+
+  .eq(
+    "user_id",
+    user.id
+  )
+
+  .maybeSingle()
+
+if (existingMember) {
+
+  toast.error(
+    "Ya perteneces a este Pasanaq"
+  )
+
+  navigate(
+    `/pasanaq/${pasanaq.id}`
+  )
+
+  return
+}
 
   // BUSCAR ÚLTIMA POSICIÓN
 
@@ -323,120 +354,11 @@ Presiona "Aceptar" solo si estás completamente seguro. ⚠️`
 
             {pasanaq.description}
 
-            <div className="mt-6">
-
-  <label
-    className="
-      block
-      font-semibold
-      mb-3
-    "
-  >
-
-    ¿Cuántos números quieres jugar?
-
-  </label>
-
-  <select
-
-    value={selectedNumbers}
-
-    onChange={(e) =>
-      setSelectedNumbers(
-        Number(e.target.value)
-      )
-    }
-
-    className="
-      w-full
-      border
-      border-silver
-      rounded-xl
-      p-4
-    "
-  >
-
-    <option value={1}>
-      1 número
-    </option>
-
-    <option value={2}>
-      2 números
-    </option>
-
-    <option value={3}>
-      3 números
-    </option>
-
-  </select>
-
-  <p
-    className="
-      mt-3
-      text-sm
-      opacity-70
-    "
-  >
-
-    Debes escoger cuidadosamente cuántos números deseas jugar.
-    Cada número representa un aporte obligatoria en cada ronda.
-    Una vez confirmada la cantidad, no podrás modificarla luego.
-    El incumplimiento de pagos puede generar penalizaciones dentro del grupo.
-
-  </p>
-
-  <div
-  className="
-    mt-5
-    bg-gold
-    text-white
-    rounded-xl
-    p-5
-  "
->
-
-  <p
-    className="
-      text-sm
-      opacity-80
-    "
-  >
-
-    Total de aportes
-
-  </p>
-
-  <h3
-    className="
-      text-3xl
-      font-bold
-      mt-2
-    "
-  >
-
-    {totalContribution}
-    {" "}
-    {pasanaq.currency}
-
-  </h3>
-
-  <p
-    className="
-      mt-2
-      text-sm
-      opacity-90
-    "
-  >
-
-    Deberás aportar esta cantidad
-    cada {frequencyLabel}
-
-  </p>
-
-</div>
-
-
-</div>
+          <MemberNumberSelector
+            selectedNumbers={selectedNumbers}
+            setSelectedNumbers={setSelectedNumbers}
+            pasanaq={pasanaq}
+          />
 
 <button
 

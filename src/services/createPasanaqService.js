@@ -7,14 +7,11 @@ export async function createPasanaq({
 
   name,
   description,
-
   amount,
-
   currency,
-
   frequency,
-
   userId,
+  selectedNumbers,
 
 }) {
 
@@ -76,7 +73,7 @@ export async function createPasanaq({
         1,
 
       member_number:
-        1,
+        selectedNumbers,
 
     })
 

@@ -74,10 +74,6 @@ export default function useRound({
         pasanaq,
       })
 
-      await consumeBalance(
-        selectedMember.user_id
-      )
-
       setPaymentModalOpen(false)
 
       setSelectedMember(null)
