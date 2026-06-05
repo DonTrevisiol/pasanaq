@@ -15,60 +15,6 @@ export async function registerPayment({
 
 }) {
 
-  // BALANCE ACTUAL
-
-  const {
-    data: profileData,
-    error: profileError
-  } = await supabase
-
-    .from("profiles")
-
-    .select("balance")
-
-    .eq(
-      "id",
-      member.user_id
-    )
-
-    .single()
-
-  if (profileError) {
-
-    throw profileError
-  }
-
-  const currentBalance =
-
-    Number(
-      profileData.balance || 0
-    )
-
-  const newBalance =
-    currentBalance + amount
-
-  // ACTUALIZAR BALANCE
-
-  const {
-    error: updateError
-  } = await supabase
-
-    .from("profiles")
-
-    .update({
-      balance: newBalance
-    })
-
-    .eq(
-      "id",
-      member.user_id
-    )
-
-  if (updateError) {
-
-    throw updateError
-  }
-
   // REGISTRAR PAYMENT
 
   const {
@@ -82,11 +28,148 @@ export async function registerPayment({
       pasanaq_id:
         round.pasanaq_id,
 
+      round_id:
+        round.id,
+
       user_id:
         member.user_id,
 
       amount,
     })
+
+  const {
+  data: contributions
+} = await supabase
+
+  .from("contributions")
+
+  .select("*")
+
+  .eq(
+    "round_id",
+    round.id
+  )
+
+  .eq(
+    "user_id",
+    member.user_id
+  )
+
+let remainingPayment = amount
+
+for (const contribution of contributions) {
+
+  const remaining =
+
+    Number(
+      contribution.amount
+    )
+
+    -
+
+    Number(
+      contribution.paid_amount || 0
+    )
+
+  if (remaining <= 0) {
+
+    continue
+  }
+
+  const paymentForThisContribution =
+
+    Math.min(
+      remainingPayment,
+      remaining
+    )
+
+  const newPaidAmount =
+
+    Number(
+      contribution.paid_amount || 0
+    )
+
+    +
+
+    paymentForThisContribution
+
+  await supabase
+
+    .from("contributions")
+
+    .update({
+
+      paid_amount:
+        newPaidAmount,
+
+      status:
+
+        newPaidAmount >=
+        Number(
+          contribution.amount
+        )
+
+        ? "paid"
+
+        : "pending",
+    })
+
+    .eq(
+      "id",
+      contribution.id
+    )
+    remainingPayment -= paymentForThisContribution
+}
+
+if (remainingPayment > 0) {
+
+  const {
+    data: memberData
+  } = await supabase
+
+    .from("pasanaq_members")
+
+    .select("wallet_balance")
+
+    .eq(
+      "pasanaq_id",
+      round.pasanaq_id
+    )
+
+    .eq(
+      "user_id",
+      member.user_id
+    )
+
+    .single()
+
+  const currentWallet =
+
+    Number(
+      memberData?.wallet_balance || 0
+    )
+
+  await supabase
+
+    .from("pasanaq_members")
+
+    .update({
+
+      wallet_balance:
+        currentWallet +
+        remainingPayment
+    })
+
+    .eq(
+      "pasanaq_id",
+      round.pasanaq_id
+    )
+
+    .eq(
+      "user_id",
+      member.user_id
+    )
+}
 
   if (paymentError) {
 

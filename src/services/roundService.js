@@ -156,9 +156,35 @@ export async function closeRound({
 
   const contributions =
 
-    members.map(
+  members.map(
 
-      (member) => ({
+    (member) => {
+
+      const amount =
+
+        pasanaqData
+          .contribution_amount
+
+        *
+
+        Number(
+          member.member_number || 1
+        )
+
+      const wallet =
+
+        Number(
+          member.wallet_balance || 0
+        )
+
+      const paidAmount =
+
+        Math.min(
+          wallet,
+          amount
+        )
+
+      return {
 
         round_id:
           newRound.id,
@@ -166,15 +192,21 @@ export async function closeRound({
         user_id:
           member.user_id,
 
-        amount:
-          pasanaqData
-            .contribution_amount
-          *
-          Number(member.member_number || 1),
+        amount,
 
-        status: "pending",
-      })
-    )
+        paid_amount:
+          paidAmount,
+
+        status:
+
+          paidAmount >= amount
+
+          ? "paid"
+
+          : "pending",
+      }
+    }
+  )
 
   const {
     error: contributionsError
@@ -188,6 +220,49 @@ export async function closeRound({
 
     throw contributionsError
   }
+
+  for (const member of members) {
+
+  const amount =
+
+    pasanaqData
+      .contribution_amount
+
+    *
+
+    Number(
+      member.member_number || 1
+    )
+
+  const wallet =
+
+    Number(
+      member.wallet_balance || 0
+    )
+
+  const remainingWallet =
+
+    Math.max(
+      0,
+      wallet - amount
+    )
+
+  await supabase
+
+    .from("pasanaq_members")
+
+    .update({
+
+      wallet_balance:
+        remainingWallet
+
+    })
+
+    .eq(
+      "id",
+      member.id
+    )
+}
 
   // ACTIVITIES
 
