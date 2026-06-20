@@ -9,11 +9,15 @@ export default function ContributionList({
 
   currentRole,
 
+  currentUserId,
+
   payContribution,
 
   pasanaq,
 
 }) {
+
+  console.log("ContributionList currentUserId: ",currentUserId)
 
   return (
 
@@ -25,25 +29,12 @@ export default function ContributionList({
           (contribution) => (
 
             <ContributionItem
-
-              key={
-                contribution.user_id
-              }
-
-              contribution={
-                contribution
-              }
-
-              currentRole={
-                currentRole
-              }
-
-              payContribution={
-                payContribution
-              }
-
+              key={contribution.user_id}
+              contribution={contribution}
+              currentRole={currentRole}
+              currentUserId={currentUserId}
+              payContribution={payContribution}
               pasanaq={pasanaq}
-
             />
 
           )

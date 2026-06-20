@@ -16,6 +16,10 @@ export default function ActivityFeed({
 
   pasanaqId,
 
+  currentRole,
+
+  currentUserId,
+
 }) {
 
   const [activities, setActivities] =
@@ -92,6 +96,53 @@ export default function ActivityFeed({
 
     setActivities(data)
   }
+
+  function getVisibleActivityMessage(
+
+  activity,
+
+  currentRole,
+
+  currentUserId
+
+) {
+
+  if (
+    activity.type !==
+    "payment_received"
+  ) {
+
+    return formatActivityMessage(
+      activity.message
+    )
+  }
+
+  if (
+    currentRole === "owner"
+  ) {
+
+    return formatActivityMessage(
+      activity.message
+    )
+  }
+
+  if (
+    activity.user_id ===
+    currentUserId
+  ) {
+
+    return formatActivityMessage(
+      activity.message
+    )
+
+  }
+
+  return `${
+
+    activity.profiles?.full_name
+
+  } realizó un aporte`
+}
 
   return (
 
@@ -170,8 +221,10 @@ export default function ActivityFeed({
                     >
 
                       {
-                        formatActivityMessage(
-                          activity.message
+                        getVisibleActivityMessage(
+                          activity,
+                          currentRole,
+                          currentUserId
                         )
                       }
 

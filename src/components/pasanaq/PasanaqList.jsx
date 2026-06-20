@@ -87,8 +87,6 @@ export default function PasanaqList() {
     return
   }
 
-  console.log(data)
-
   const uniquePasanaqs =
 
   Array.from(

@@ -63,7 +63,6 @@ export default function ProfilePage() {
     }
 
     setProfile(data)
-    console.log(data)
   }
 
   async function fetchStats() {

@@ -91,10 +91,15 @@ export default function PaymentModal({
 
         <input
           type="number"
+          min="1"
+          step="1"
           value={amount}
           onChange={(e) =>
             setAmount(
-              e.target.value
+              Math.max(
+                1,
+                Number(e.target.value)
+              )
             )
           }
           className="

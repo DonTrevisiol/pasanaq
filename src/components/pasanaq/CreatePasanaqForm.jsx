@@ -36,6 +36,38 @@ export default function CreatePasanaqForm() {
 
     event.preventDefault()
 
+    if (
+      !amount ||
+      Number(amount) <= 0
+    ) {
+
+      toast.error(
+        "El aporte debe ser mayor a 0"
+      )
+
+      return
+    }
+
+    if (
+      selectedNumbers < 1
+    ) {
+
+      toast.error(
+        "Debes seleccionar al menos un número"
+      )
+
+      return
+    }
+
+    if (!name.trim()) {
+
+      toast.error(
+        "Debes ingresar un nombre"
+      )
+
+      return
+    }
+
     const pasanaq =
       await createPasanaq({
         name,

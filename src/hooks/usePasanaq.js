@@ -19,6 +19,9 @@ export default function usePasanaq(id) {
   const [currentRole, setCurrentRole] =
     useState(null)
 
+  const [currentUserId, setCurrentUserId] =
+    useState(null)
+
   const [round, setRound] =
     useState(null)
 
@@ -186,6 +189,7 @@ export default function usePasanaq(id) {
       role,
       position,
       member_number,
+      wallet_balance,
       profiles (
         full_name,
         avatar_url
@@ -206,6 +210,8 @@ export default function usePasanaq(id) {
   const {
     data: authData
   } = await supabase.auth.getUser()
+
+  setCurrentUserId(authData.user.id)
 
   const currentMember =
     data.find(
@@ -375,6 +381,8 @@ async function fetchRoundData(id) {
     members,
 
     currentRole,
+
+    currentUserId,
 
     round,
 

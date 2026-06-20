@@ -15,6 +15,8 @@ export default function ContributionItem({
 
   currentRole,
 
+  currentUserId,
+
   payContribution,
 
   pasanaq,
@@ -31,6 +33,25 @@ export default function ContributionItem({
       ) * 100
 
     : 0
+
+  const canSeeBalance =
+    currentRole === "owner"
+
+    ||
+
+    currentRole === "admin"
+
+    ||
+
+    currentUserId === contribution.user_id
+
+  const futureRoundsCovered = contribution.totalAmount > 0
+
+        ? Math.floor(
+          contribution.wallet_balance / contribution.totalAmount
+        )
+
+        : 0
 
   return (
 
@@ -147,20 +168,125 @@ export default function ContributionItem({
 
             progress >= 100
 
-            ? (
+? (
 
-              <span
-                className="
-                  text-savings
-                  font-bold
-                "
-              >
+  <div
+    className="
+      text-right
+    "
+  >
 
-                Pagado
+    <span
+      className="
+        text-savings
+        font-bold
+        block
+      "
+    >
 
-              </span>
+      Pagado
 
-            )
+    </span>
+
+    {
+  canSeeBalance
+
+  &&
+
+  contribution.wallet_balance > 0
+
+  && (
+
+    <>
+
+    <p
+      className="
+        text-sm
+        text-fintech
+        font-semibold
+        mt-1
+      "
+    >
+
+      Saldo a favor:
+
+      {" "}
+
+      {
+          formatCurrency(
+          contribution.wallet_balance,
+          pasanaq.currency
+        )
+      }
+
+      </p>
+
+      <p
+          className="
+          text-sm
+          text-fintech
+          "
+      >
+
+          Proximas rondas cubiertas:
+          {" "}
+
+          {futureRoundsCovered}
+
+          </p>
+
+    </>
+  )
+}
+
+
+
+    {
+
+  (
+
+    currentRole === "owner"
+
+    ||
+
+    currentRole === "admin"
+
+  )
+
+  && (
+
+    <button
+
+      onClick={() =>
+
+        payContribution(
+          contribution
+        )
+      }
+
+      className="
+        mt-2
+        bg-gold
+        text-white
+        px-4
+        py-2
+        rounded-xl
+        font-semibold
+      "
+    >
+
+      Cobrar
+
+    </button>
+
+  )
+
+}
+
+
+  </div>
+
+)
 
             : (
 

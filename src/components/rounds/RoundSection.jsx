@@ -13,6 +13,8 @@ export default function RoundSection({
 
   currentRole,
 
+  currentUserId,
+
   refreshData,
 
   pasanaq,
@@ -23,6 +25,8 @@ export default function RoundSection({
 
   if (!round) return null
 
+  console.log("RoundSection currentUserId: ", currentUserId)
+
   return (
 
     <div className="mt-10">
@@ -31,6 +35,7 @@ export default function RoundSection({
         round={round}
         contributions={contributions}
         currentRole={currentRole}
+        currentUserId={currentUserId}
         refreshData={refreshData}
         pasanaq={pasanaq}
         payments={payments}

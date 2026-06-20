@@ -29,6 +29,7 @@ export default function PasanaqDetail() {
     pasanaq,
     members,
     currentRole,
+    currentUserId,
     round,
     contributions,
     payments,
@@ -49,6 +50,8 @@ export default function PasanaqDetail() {
 
     )
   }
+
+  console.log("PasanaqDetail currentUserId: ", currentUserId)
 
   return (
 
@@ -90,6 +93,7 @@ export default function PasanaqDetail() {
         round={round}
         contributions={contributions}
         currentRole={currentRole}
+        currentUserId={currentUserId}
         refreshData={refreshData}
         pasanaq={pasanaq}
         payments={payments}
@@ -220,6 +224,8 @@ export default function PasanaqDetail() {
       </div>
         <ActivityFeed
           pasanaqId={id}
+          currentRole={currentRole}
+          currentUserId={currentUserId}
         />
 
     </div>

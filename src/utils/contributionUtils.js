@@ -5,6 +5,8 @@ export function groupContributions({
   contributions,
 
   contributionAmount,
+
+  members,
 }) {
 
   return Object.values(
@@ -18,23 +20,38 @@ export function groupContributions({
 
         if (!acc[userId]) {
 
-          acc[userId] = {
+  const member =
 
-            user_id:
-              contribution.user_id,
+    members.find(
 
-            profiles:
-              contribution.profiles,
+      (member) =>
 
-            totalAmount: 0,
+        member.user_id === userId
+    )
 
-            paidAmount: 0,
+  acc[userId] = {
 
-            totalSlots: 0,
+    user_id:
+      contribution.user_id,
 
-            paidSlots: 0,
-          }
-        }
+    profiles:
+      contribution.profiles,
+
+    wallet_balance:
+
+      Number(
+        member?.wallet_balance || 0
+      ),
+
+    totalAmount: 0,
+
+    paidAmount: 0,
+
+    totalSlots: 0,
+
+    paidSlots: 0,
+  }
+}
 
         const amount =
 

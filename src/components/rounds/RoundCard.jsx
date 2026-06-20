@@ -27,6 +27,7 @@ export default function RoundCard({
   contributions,
   payments,
   currentRole,
+  currentUserId,
   refreshData,
   pasanaq,
   members,
@@ -65,6 +66,7 @@ const groupedContributions =
   groupContributions({
     contributions,
     contributionAmount: pasanaq.contribution_amount,
+    members,
   })
 
   const totalExpected =
@@ -89,6 +91,8 @@ const totalMembers =
   calculateTotalMembers(
     groupedContributions
   )
+
+  console.log("RoundCard currentUserId: ", currentUserId)
 
   return (
 
@@ -119,6 +123,7 @@ const totalMembers =
       <ContributionList
         contributions={groupedContributions}
         currentRole={currentRole}
+        currentUserId={currentUserId}
         payContribution={payContribution}
         processingId={processingId}
         pasanaq={pasanaq}

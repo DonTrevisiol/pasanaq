@@ -138,6 +138,15 @@ Presiona "Aceptar" solo si estás completamente seguro. ⚠️`
     return
   }
 
+  if (pasanaq.status === "active") {
+
+    toast.error(
+      "Este Pasanaq ya está en curso. No se pueden unir nuevos miembros."
+    )
+
+    return
+  }
+
   const {
   data: existingMember
 } = await supabase
@@ -364,6 +373,8 @@ if (existingMember) {
 
   onClick={handleJoin}
 
+  disabled={pasanaq.status === "active"}
+
   className="
     mt-8
     w-full
@@ -372,10 +383,68 @@ if (existingMember) {
     py-4
     rounded-xl
     font-bold
+    disabled:opacity-50
   "
 >
 
-  Unirme al Pasanaq
+  {
+
+    pasanaq.status === "active"
+
+    ? "Pasanaq en curso"
+
+    : "Unirme al Pasanaq"
+
+  }
+
+</button>
+
+{
+  pasanaq?.status === "active"
+
+  && (
+    <>
+
+    <p
+  className="
+    mt-4
+    text-center
+    text-sm
+    opacity-70
+  "
+>
+
+  Este Pasanaq ya comenzó y no acepta nuevos participantes, lo sentimos pero esta es una invitación caducada.
+
+</p>
+</>
+  )
+}
+
+<button
+
+  onClick={() =>
+
+    navigate("/dashboard")
+  }
+
+  className="
+    mt-4
+    w-full
+    bg-silver
+    text-dark
+    py-3
+    rounded-xl
+    transition-colors
+    hover:bg-fintech
+    hover:text-white
+    border
+    border-silver
+    font-semibold
+  "
+>
+
+  Volver al inicio
 
 </button>
 

@@ -109,3 +109,20 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+
+/* Ocultar flechas de inputs numéricos */
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+
+  -webkit-appearance: none !important;
+  margin: 0;
+}
+
+input[type="number"] {
+
+  appearance: textfield !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: textfield !important;
+}

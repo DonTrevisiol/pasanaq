@@ -19,7 +19,9 @@ export default function PasanaqContributionFields({
 
       <input
 
-        type="number"
+        type="text"
+
+        inputMode="numeric"
 
         placeholder="Monto por aporte"
 
