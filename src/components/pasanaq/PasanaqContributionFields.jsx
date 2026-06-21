@@ -27,11 +27,17 @@ export default function PasanaqContributionFields({
 
         value={amount}
 
-        onChange={(e) =>
-          setAmount(
-            e.target.value
+        onChange={(e) => {
+
+          const value =
+
+            e.target.value.replace(
+              /[^0-9]/g,
+              ""
           )
+            setAmount(value)
         }
+      }
 
         className="
           w-full
