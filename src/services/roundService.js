@@ -60,42 +60,77 @@ export async function closeRound({
     throw membersError
   }
 
-  // SIGUIENTE RECEPTOR
+  // SIGUIENTE COFRE
 
-  const nextReceiver =
+  const {
+  data: currentChest,
+  error: currentChestError
+} = await supabase
 
-    members.find(
+  .from("round_chests")
 
-      (member) =>
+  .select("*")
 
-        member.position ===
+  .eq(
+    "id",
+    round.chest_id
+  )
 
-        round.round_number + 1
+  .single()
+
+if (
+  currentChestError ||
+  !currentChest
+) {
+
+  throw new Error(
+    "No se encontró el cofre actual"
+  )
+}
+
+const {
+  data: nextChest
+} = await supabase
+
+  .from("round_chests")
+
+  .select("*")
+
+  .eq(
+    "pasanaq_id",
+    round.pasanaq_id
+  )
+
+  .eq(
+    "chest_order",
+    currentChest.chest_order + 1
+  )
+
+  .maybeSingle()
+
+// TERMINADO
+
+if (!nextChest) {
+
+  await supabase
+
+    .from("pasanaqs")
+
+    .update({
+      status: "finished"
+    })
+
+    .eq(
+      "id",
+      round.pasanaq_id
     )
 
-  // TERMINADO
+  await refreshData()
 
-  if (!nextReceiver) {
-
-    await supabase
-
-      .from("pasanaqs")
-
-      .update({
-        status: "finished"
-      })
-
-      .eq(
-        "id",
-        round.pasanaq_id
-      )
-
-    await refreshData()
-
-    return {
-      finished: true
-    }
+  return {
+    finished: true
   }
+}
 
   // NUEVA RONDA
 
@@ -108,17 +143,20 @@ export async function closeRound({
 
     .insert({
 
-      pasanaq_id:
-        round.pasanaq_id,
+  pasanaq_id:
+    round.pasanaq_id,
 
-      round_number:
-        round.round_number + 1,
+  round_number:
+    round.round_number + 1,
 
-      receiver_id:
-        nextReceiver.user_id,
+  receiver_id:
+    nextChest.user_id,
 
-      status: "active",
-    })
+  chest_id:
+    nextChest.id,
+
+  status: "active",
+})
 
     .select()
 
@@ -295,13 +333,13 @@ export async function closeRound({
         round.pasanaq_id,
 
       user_id:
-        nextReceiver.user_id,
+        nextChest.user_id,
 
       type:
         "round_started",
 
       message:
-`Comenzó la ronda #${newRound.round_number} y el receptor actual es ${nextReceiver.profiles?.full_name}`,
+`Comenzó la ronda #${newRound.round_number} y el receptor actual es ${nextChest.chest_order}`,
     })
 
   await refreshData()

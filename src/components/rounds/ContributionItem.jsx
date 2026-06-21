@@ -239,8 +239,6 @@ export default function ContributionItem({
   )
 }
 
-
-
     {
 
   (
@@ -340,6 +338,47 @@ export default function ContributionItem({
 
             )
           }
+
+                    {
+
+  contribution.totalAmount >
+
+  contribution.paidAmount
+
+  && (
+
+    <p
+      className="
+        text-sm
+        text-red-500
+        font-semibold
+        mt-1
+      "
+    >
+
+      Debe:
+
+      {" "}
+
+      {
+
+        formatCurrency(
+
+          contribution.totalAmount -
+
+          contribution.paidAmount,
+
+          pasanaq.currency
+
+        )
+
+      }
+
+    </p>
+
+  )
+
+}
 
         </div>
 

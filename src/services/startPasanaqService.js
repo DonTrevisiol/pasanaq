@@ -11,37 +11,80 @@ export async function startPasanaqService({
 
 }) {
 
-  const sortedMembers =
+  console.log("PASANAQ ACTUAL: ", pasanaq.id)
 
-    [...members]
+  const {
+      error: chestError
+    } = await supabase.rpc(
+      "generate_chests_for_pasanaq",
+      {
+        target_pasanaq_id:
+          pasanaq.id
+      }
+    )
 
-      .sort(
-        (a, b) =>
-          a.position - b.position
-      )
+    if (chestError) {
 
-  const firstReceiver =
-    sortedMembers[0]
+      throw chestError
+    }
 
-  if (!firstReceiver) {
+  const {
+    data: firstChest,
+    error: chestQueryError
+  } = await supabase
+
+    .from("round_chests")
+
+    .select("*")
+
+    .eq(
+      "pasanaq_id",
+      pasanaq.id
+    )
+
+    .eq(
+      "chest_order",
+      1
+    )
+
+    .single()
+
+    console.log("FIRST CHEST: ", firstChest)
+    console.log("CHEST ERROR: ", chestQueryError)
+
+  if (
+    chestQueryError ||
+    !firstChest
+  ) {
 
     throw new Error(
-      "No hay miembros"
+      "No existe el primer cofre"
     )
   }
 
-  await supabase
+  const firstReceiver =
 
-    .from("pasanaqs")
+    members.find(
 
-    .update({
-      status: "active"
-    })
+      (member) =>
 
-    .eq(
-      "id",
-      pasanaq.id
+        member.user_id ===
+
+        firstChest.user_id
     )
+
+    await supabase
+
+      .from("pasanaqs")
+
+      .update({
+        status: "active"
+      })
+
+      .eq(
+        "id",
+        pasanaq.id
+      )
 
   const {
     data: roundData,
@@ -60,6 +103,9 @@ export async function startPasanaqService({
 
       receiver_id:
         firstReceiver.user_id,
+
+      chest_id:
+        firstChest.id,
 
       status:
         "active",
