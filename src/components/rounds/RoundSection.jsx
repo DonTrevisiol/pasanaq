@@ -21,6 +21,8 @@ export default function RoundSection({
 
   members,
 
+  roundChests,
+
 }) {
 
   if (!round) return null
@@ -40,6 +42,7 @@ export default function RoundSection({
         pasanaq={pasanaq}
         payments={payments}
         members={members}
+        roundChests={roundChests}
       />
 
     </div>

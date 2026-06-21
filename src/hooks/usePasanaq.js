@@ -40,6 +40,9 @@ export default function usePasanaq(id) {
   const [activities, setActivities] =
     useState([])
 
+  const [roundChests, setRoundChests] =
+    useState([])
+
   async function refreshData() {
 
     if (!id) return
@@ -53,6 +56,8 @@ export default function usePasanaq(id) {
     await fetchRoundData(id)
 
     await fetchRoundHistory(id)
+
+    await fetchRoundChests(id)
 
     await fetchActivities(id)
 
@@ -340,6 +345,39 @@ async function fetchRoundData(id) {
   setRoundHistory(data)
 }
 
+  async function fetchRoundChests(id) {
+
+  const {
+    data,
+    error
+  } = await supabase
+
+    .from("round_chests")
+
+    .select("*")
+
+    .eq(
+      "pasanaq_id",
+      id
+    )
+
+    .order(
+      "chest_order",
+      { ascending: true }
+    )
+
+  if (error) {
+
+    console.log(error)
+
+    return
+  }
+
+  setRoundChests(
+    data || []
+  )
+}
+
   async function fetchActivities(id) {
 
   const {
@@ -379,6 +417,8 @@ async function fetchRoundData(id) {
     pasanaq,
 
     members,
+
+    roundChests,
 
     currentRole,
 

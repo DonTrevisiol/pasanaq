@@ -34,6 +34,7 @@ export default function PasanaqDetail() {
     contributions,
     payments,
     roundHistory,
+    roundChests,
     loading,
     refreshData,
   } = usePasanaq(id)
@@ -92,6 +93,7 @@ export default function PasanaqDetail() {
       <RoundSection
         round={round}
         contributions={contributions}
+        roundChests={roundChests}
         currentRole={currentRole}
         currentUserId={currentUserId}
         refreshData={refreshData}

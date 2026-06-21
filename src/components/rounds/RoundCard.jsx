@@ -7,6 +7,7 @@ import toast from "react-hot-toast"
 import Avatar from "../profiles/Avatar"
 import PaymentModal from "./PaymentModal"
 import RoundProgress from "./RoundProgress"
+import RoundFutureChest from "./RoundFutureChest"
 import ContributionItem from "./ContributionItem"
 import ContributionList from "./ContributionList"
 import RoundHeader from "./RoundHeader"
@@ -31,6 +32,7 @@ export default function RoundCard({
   refreshData,
   pasanaq,
   members,
+  roundChests,
 
 }) {
 
@@ -92,8 +94,6 @@ const totalMembers =
     groupedContributions
   )
 
-  console.log("RoundCard currentUserId: ", currentUserId)
-
   return (
 
     <div
@@ -108,6 +108,14 @@ const totalMembers =
 
       <RoundHeader
         round={round}
+      />
+
+      <RoundFutureChest
+        currentRole={currentRole}
+        currentUserId={currentUserId}
+        round={round}
+        roundChests={roundChests}
+        members={members}
       />
 
       <RoundProgress
