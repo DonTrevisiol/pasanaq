@@ -162,7 +162,7 @@ export default function ContributionItem({
 
         </div>
 
-        <div className="ml-4">
+        <div className="ml-4 text-right">
 
           {
 
@@ -170,11 +170,7 @@ export default function ContributionItem({
 
 ? (
 
-  <div
-    className="
-      text-right
-    "
-  >
+  <div>
 
     <span
       className="
@@ -187,57 +183,6 @@ export default function ContributionItem({
       Pagado
 
     </span>
-
-    {
-  canSeeBalance
-
-  &&
-
-  contribution.wallet_balance > 0
-
-  && (
-
-    <>
-
-    <p
-      className="
-        text-sm
-        text-fintech
-        font-semibold
-        mt-1
-      "
-    >
-
-      Saldo a favor:
-
-      {" "}
-
-      {
-          formatCurrency(
-          contribution.wallet_balance,
-          pasanaq.currency
-        )
-      }
-
-      </p>
-
-      <p
-          className="
-          text-sm
-          text-fintech
-          "
-      >
-
-          Proximas rondas cubiertas:
-          {" "}
-
-          {futureRoundsCovered}
-
-          </p>
-
-    </>
-  )
-}
 
     {
 
@@ -383,6 +328,67 @@ export default function ContributionItem({
         </div>
 
       </div>
+
+      {
+
+  progress >= 100
+
+  &&
+
+  canSeeBalance
+
+  &&
+
+  contribution.wallet_balance > 0
+
+  && (
+
+    <div
+      className="
+        mt-3
+        text-right
+      "
+    >
+
+    <p
+      className="
+        text-sm
+        text-fintech
+        font-semibold
+        mt-1
+      "
+    >
+
+      Saldo a favor:
+
+      {" "}
+
+      {
+          formatCurrency(
+          contribution.wallet_balance,
+          pasanaq.currency
+        )
+      }
+
+      </p>
+
+      <p
+          className="
+          text-sm
+          text-fintech
+          "
+      >
+
+          Proximas rondas cubiertas:
+          {" "}
+
+          {futureRoundsCovered}
+
+          </p>
+
+    </div>
+  )
+}
 
     </div>
   )
