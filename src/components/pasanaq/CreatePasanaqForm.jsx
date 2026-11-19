@@ -1,27 +1,39 @@
-// ./pasanaq/src/components/CreatePasanaqForm.jsx:
+// ./pasanaq/src/components/CreatePasanaqForm.jsx
 
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { supabase } from "../../services/supabase"
+import { supabase } from "../../services/supabase" //borrar si se puede
 import { useAuth } from "../../context/AuthContext"
 import toast from "react-hot-toast"
-import PasanaqBasicFields from "./PasanaqBasicFields"
-import MemberNumberSelector from "./MemberNumberSelector"
-import PasanaqContributionFields from "./PasanaqContributionFields"
-import { createPasanaq } from "../../services/createPasanaqService"
+
+import PasanaqBasicFields
+from "./PasanaqBasicFields"
+
+import MemberNumberSelector
+from "./MemberNumberSelector"
+
+import PasanaqContributionFields
+from "./PasanaqContributionFields"
+
+import { createPasanaq }
+from "../../services/createPasanaqService"
 
 export default function CreatePasanaqForm() {
 
-  const { user } = useAuth()
+  const { user } =
+    useAuth()
 
-  const navigate = useNavigate()
+  const navigate =
+    useNavigate()
 
-  const [name, setName] = useState("")
+  const [name, setName] =
+    useState("")
 
   const [description, setDescription] =
     useState("")
 
-  const [amount, setAmount] = useState("")
+  const [amount, setAmount] =
+    useState("")
 
   const [frequency, setFrequency] =
     useState("monthly")
@@ -31,6 +43,25 @@ export default function CreatePasanaqForm() {
 
   const [selectedNumbers, setSelectedNumbers] =
     useState(1)
+
+  // ANY = el usuario no exige que sus cofres
+  // estén juntos ni separados.
+  const [payoutMode, setPayoutMode] =
+    useState("any")
+
+  const totalContribution =
+    selectedNumbers *
+    Number(amount || 0)
+
+  const frequencyLabel = {
+
+    daily: "día",
+
+    weekly: "semana",
+
+    monthly: "mes",
+
+  }[frequency]
 
   async function handleCreate(event) {
 
@@ -68,21 +99,59 @@ export default function CreatePasanaqForm() {
       return
     }
 
-    const pasanaq =
+    const confirmed =
+      window.confirm(
+
+`⚠️ ¿Estás seguro de que podrás aportar ${totalContribution} ${currency} cada ${frequencyLabel}?
+
+Cada número representa una obligación de pago.
+
+Si incumples los aportes, podrías recibir penalizaciones dentro del grupo.
+
+Presiona "Aceptar" solo si estás completamente seguro. ⚠️`
+
+      )
+
+    if (!confirmed) return
+
+    try {
+
       await createPasanaq({
+
         name,
+
         description,
+
         amount,
+
         currency,
+
         frequency,
+
         userId:
           user.id,
+
         selectedNumbers,
+
+        payoutMode,
+
       })
 
-    toast.success("Pasanaq creado")
+      toast.success(
+        "Pasanaq creado"
+      )
 
-    navigate(0)
+      navigate(0)
+
+    } catch (error) {
+
+      console.error(error)
+
+      toast.error(
+        error.message ||
+        "No se pudo crear el Pasanaq"
+      )
+    }
   }
 
   return (
@@ -99,39 +168,73 @@ export default function CreatePasanaqForm() {
       "
     >
 
-      <h2 className="
-        text-2xl
-        font-bold
-        text-petroleum
-      ">
+      <h2
+        className="
+          text-2xl
+          font-bold
+          text-petroleum
+        "
+      >
 
         Crear Pasanaq
 
       </h2>
 
       <PasanaqBasicFields
+
         name={name}
+
         setName={setName}
 
         description={description}
+
         setDescription={setDescription}
+
       />
 
       <PasanaqContributionFields
+
         amount={amount}
+
         setAmount={setAmount}
 
         currency={currency}
+
         setCurrency={setCurrency}
 
         frequency={frequency}
+
         setFrequency={setFrequency}
+
       />
 
       <MemberNumberSelector
-        selectedNumbers={selectedNumbers}
-        setSelectedNumbers={setSelectedNumbers}
-        pasanaq={{contribution_amount: amount, currency, frequency}}
+
+        selectedNumbers={
+          selectedNumbers
+        }
+
+        setSelectedNumbers={
+          setSelectedNumbers
+        }
+
+        payoutMode={
+          payoutMode
+        }
+
+        setPayoutMode={
+          setPayoutMode
+        }
+
+        pasanaq={{
+          contribution_amount:
+            amount,
+
+          currency,
+
+          frequency,
+        }}
+
       />
 
       <button

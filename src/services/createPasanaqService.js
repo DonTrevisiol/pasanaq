@@ -6,12 +6,20 @@ from "./supabase"
 export async function createPasanaq({
 
   name,
+
   description,
+
   amount,
+
   currency,
+
   frequency,
+
   userId,
+
   selectedNumbers,
+
+  payoutMode = "any",
 
 }) {
 
@@ -75,6 +83,9 @@ export async function createPasanaq({
       member_number:
         selectedNumbers,
 
+      payout_mode:
+        payoutMode,
+
     })
 
   if (memberError) {
@@ -90,14 +101,18 @@ export async function createPasanaq({
 
     .select("full_name")
 
-    .eq("id", userId)
+    .eq(
+      "id",
+      userId
+    )
 
     .single()
 
   const userName =
 
     profileData?.full_name
-    || "Un usuario"
+    ||
+    "Un usuario"
 
   await supabase
 

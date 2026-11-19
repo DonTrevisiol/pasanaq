@@ -6,6 +6,10 @@ export default function MemberNumberSelector({
 
   setSelectedNumbers,
 
+  payoutMode,
+
+  setPayoutMode,
+
   pasanaq,
 
 }) {
@@ -25,6 +29,21 @@ export default function MemberNumberSelector({
     monthly: "mes",
 
   }[pasanaq?.frequency]
+
+  function handleNumbersChange(event) {
+
+    const newNumber =
+      Number(event.target.value)
+
+    setSelectedNumbers(newNumber)
+
+    if (newNumber < 2) {
+
+      setPayoutMode("any")
+
+    }
+
+  }
 
   return (
 
@@ -46,13 +65,7 @@ export default function MemberNumberSelector({
 
         value={selectedNumbers}
 
-        onChange={(e) =>
-
-          setSelectedNumbers(
-
-            Number(e.target.value)
-          )
-        }
+        onChange={handleNumbersChange}
 
         className="
           w-full
@@ -95,6 +108,236 @@ export default function MemberNumberSelector({
         no podrás modificarla luego.
 
       </p>
+
+      {
+
+        selectedNumbers >= 2
+
+        && (
+
+          <div className="mt-8">
+
+            <label
+              className="
+                block
+                font-semibold
+                mb-3
+              "
+            >
+
+              ¿Cómo quieres recibir tus cofres?
+
+            </label>
+
+            <div className="space-y-3">
+
+              <label
+                className="
+                  flex
+                  items-start
+                  gap-3
+                  border
+                  border-silver
+                  rounded-xl
+                  p-4
+                  cursor-pointer
+                "
+              >
+
+                <input
+
+                  type="radio"
+
+                  name="payoutMode"
+
+                  value="any"
+
+                  checked={
+                    payoutMode === "any"
+                  }
+
+                  onChange={(e) =>
+
+                    setPayoutMode(
+                      e.target.value
+                    )
+
+                  }
+
+                  className="mt-1"
+
+                />
+
+                <div>
+
+                  <p className="font-semibold">
+
+                    No importa
+
+                  </p>
+
+                  <p
+                    className="
+                      text-sm
+                      opacity-70
+                      mt-1
+                    "
+                  >
+
+                    Mis cofres pueden salir
+                    juntos o separados.
+
+                  </p>
+
+                </div>
+
+              </label>
+
+              <label
+                className="
+                  flex
+                  items-start
+                  gap-3
+                  border
+                  border-silver
+                  rounded-xl
+                  p-4
+                  cursor-pointer
+                "
+              >
+
+                <input
+
+                  type="radio"
+
+                  name="payoutMode"
+
+                  value="together"
+
+                  checked={
+                    payoutMode === "together"
+                  }
+
+                  onChange={(e) =>
+
+                    setPayoutMode(
+                      e.target.value
+                    )
+
+                  }
+
+                  className="mt-1"
+
+                />
+
+                <div>
+
+                  <p className="font-semibold">
+
+                    Cofres juntos
+
+                  </p>
+
+                  <p
+                    className="
+                      text-sm
+                      opacity-70
+                      mt-1
+                    "
+                  >
+
+                    Prefiero recibir mis cofres
+                    de forma consecutiva.
+
+                  </p>
+
+                </div>
+
+              </label>
+
+              <label
+                className="
+                  flex
+                  items-start
+                  gap-3
+                  border
+                  border-silver
+                  rounded-xl
+                  p-4
+                  cursor-pointer
+                "
+              >
+
+                <input
+
+                  type="radio"
+
+                  name="payoutMode"
+
+                  value="separate"
+
+                  checked={
+                    payoutMode === "separate"
+                  }
+
+                  onChange={(e) =>
+
+                    setPayoutMode(
+                      e.target.value
+                    )
+
+                  }
+
+                  className="mt-1"
+
+                />
+
+                <div>
+
+                  <p className="font-semibold">
+
+                    Cofres separados
+
+                  </p>
+
+                  <p
+                    className="
+                      text-sm
+                      opacity-70
+                      mt-1
+                    "
+                  >
+
+                    Prefiero que mis cofres
+                    no sean consecutivos.
+
+                  </p>
+
+                </div>
+
+              </label>
+
+            </div>
+
+            <p
+              className="
+                mt-3
+                text-sm
+                opacity-60
+              "
+            >
+
+              Esta preferencia se tendrá
+              en cuenta al organizar el
+              orden de los cofres.
+
+            </p>
+
+          </div>
+
+        )
+
+      }
 
       <div
         className="

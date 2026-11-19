@@ -1,10 +1,23 @@
 // ./pasanaq/src/pages/InvitePage.jsx
 
-import { useEffect, useState } from "react"
-import { useParams, useNavigate } from "react-router-dom"
-import { supabase } from "../services/supabase"
-import MemberNumberSelector from "../components/pasanaq/MemberNumberSelector"
-import toast from "react-hot-toast"
+import {
+  useEffect,
+  useState
+} from "react"
+
+import {
+  useParams,
+  useNavigate
+} from "react-router-dom"
+
+import { supabase }
+from "../services/supabase"
+
+import MemberNumberSelector
+from "../components/pasanaq/MemberNumberSelector"
+
+import toast
+from "react-hot-toast"
 
 export default function InvitePage() {
 
@@ -26,10 +39,15 @@ export default function InvitePage() {
   const [selectedNumbers, setSelectedNumbers] =
     useState(1)
 
+  // Por defecto:
+  // no importa si sus cofres quedan
+  // juntos o separados.
+  const [payoutMode, setPayoutMode] =
+    useState("any")
+
   useEffect(() => {
 
     fetchInvitation()
-    //handleJoin()
 
   }, [])
 
@@ -44,11 +62,17 @@ export default function InvitePage() {
 
       .select("*")
 
-      .eq("token", token)
+      .eq(
+        "token",
+        token
+      )
 
       .single()
 
-    if (error || !data) {
+    if (
+      error ||
+      !data
+    ) {
 
       toast.error(
         "Invitación inválida"
@@ -79,12 +103,16 @@ export default function InvitePage() {
 
     if (pasanaqError) {
 
-      console.log(pasanaqError)
+      console.log(
+        pasanaqError
+      )
 
       return
     }
 
-    setPasanaq(pasanaqData)
+    setPasanaq(
+      pasanaqData
+    )
 
     setLoading(false)
   }
@@ -93,7 +121,10 @@ export default function InvitePage() {
 
     selectedNumbers *
 
-    (pasanaq?.contribution_amount || 0)
+    (
+      pasanaq?.contribution_amount ||
+      0
+    )
 
   const frequencyLabel = {
 
@@ -103,12 +134,14 @@ export default function InvitePage() {
 
     monthly: "mes",
 
-  }[pasanaq?.frequency]
+  }[
+    pasanaq?.frequency
+  ]
 
   async function handleJoin() {
 
-  const confirmed =
-    window.confirm(
+    const confirmed =
+      window.confirm(
 
 `⚠️ ¿Estás seguro de que podrás aportar ${totalContribution} ${pasanaq.currency} cada ${frequencyLabel}?
 
@@ -118,185 +151,199 @@ Si incumples los aportes, podrías recibir penalizaciones dentro del grupo.
 
 Presiona "Aceptar" solo si estás completamente seguro. ⚠️`
 
-    )
+      )
 
-  if (!confirmed) return
+    if (!confirmed) return
 
-  const {
-    data: authData
-  } = await supabase.auth.getUser()
+    const {
+      data: authData
+    } = await supabase.auth.getUser()
 
-  const user =
-    authData.user
+    const user =
+      authData.user
 
-  if (!user) {
+    if (!user) {
 
-    toast.error(
-      "Debes iniciar sesión"
-    )
+      toast.error(
+        "Debes iniciar sesión"
+      )
 
-    return
-  }
+      return
+    }
 
-  if (pasanaq.status === "active") {
+    if (
+      pasanaq.status ===
+      "active"
+    ) {
 
-    toast.error(
-      "Este Pasanaq ya está en curso. No se pueden unir nuevos miembros."
-    )
+      toast.error(
+        "Este Pasanaq ya está en curso. No se pueden unir nuevos miembros."
+      )
 
-    return
-  }
+      return
+    }
 
-  const {
-  data: existingMember
-} = await supabase
+    const {
+      data: existingMember
+    } = await supabase
 
-  .from("pasanaq_members")
+      .from("pasanaq_members")
 
-  .select("id")
+      .select("id")
 
-  .eq(
-    "pasanaq_id",
-    pasanaq.id
-  )
+      .eq(
+        "pasanaq_id",
+        pasanaq.id
+      )
 
-  .eq(
-    "user_id",
-    user.id
-  )
+      .eq(
+        "user_id",
+        user.id
+      )
 
-  .maybeSingle()
+      .maybeSingle()
 
-if (existingMember) {
+    if (existingMember) {
 
-  toast.error(
-    "Ya perteneces a este Pasanaq"
-  )
+      toast.error(
+        "Ya perteneces a este Pasanaq"
+      )
 
-  navigate(
-    `/pasanaq/${pasanaq.id}`
-  )
+      navigate(
+        `/pasanaq/${pasanaq.id}`
+      )
 
-  return
-}
+      return
+    }
 
-  // BUSCAR ÚLTIMA POSICIÓN
+    // BUSCAR ÚLTIMA POSICIÓN
 
-  const {
-    data: existingMembers,
-    error: membersError
-  } = await supabase
+    const {
+      data: existingMembers,
+      error: membersError
+    } = await supabase
 
-    .from("pasanaq_members")
+      .from("pasanaq_members")
 
-    .select("position")
+      .select("position")
 
-    .eq(
-      "pasanaq_id",
-      pasanaq.id
-    )
+      .eq(
+        "pasanaq_id",
+        pasanaq.id
+      )
 
-    .order(
-      "position",
-      { ascending: false }
-    )
+      .order(
+        "position",
+        {
+          ascending: false
+        }
+      )
 
-  if (membersError) {
+    if (membersError) {
 
-    console.log(membersError)
+      console.log(
+        membersError
+      )
 
-    toast.error(
-      membersError.message
-    )
+      toast.error(
+        membersError.message
+      )
 
-    return
-  }
+      return
+    }
 
-  const lastPosition =
+    const lastPosition =
 
-    existingMembers?.[0]
-      ?.position || 0
+      existingMembers?.[0]
+        ?.position || 0
 
-  // CREAR POSICIONES
+    // CREAR MIEMBRO
 
-  const inserts = [{
+    const {
+      error: insertError
+    } = await supabase
 
-  pasanaq_id:
-    pasanaq.id,
+      .from("pasanaq_members")
 
-  user_id:
-    user.id,
+      .insert({
 
-  role:
-    "member",
+        pasanaq_id:
+          pasanaq.id,
 
-  position:
-    lastPosition + 1,
+        user_id:
+          user.id,
 
-  member_number:
-    selectedNumbers,
-}]
+        role:
+          "member",
 
-  const {
-    error: insertError
-  } = await supabase
+        position:
+          lastPosition + 1,
 
-    .from("pasanaq_members")
+        member_number:
+          selectedNumbers,
 
-    .insert(inserts)
+        payout_mode:
+          payoutMode,
 
-  if (insertError) {
+      })
 
-    console.log(insertError)
+    if (insertError) {
 
-    toast.error(
-      insertError.message
-    )
+      console.log(
+        insertError
+      )
 
-    return
-  }
+      toast.error(
+        insertError.message
+      )
 
-  // ACTIVIDAD
+      return
+    }
 
-  const {
-    data: profileData
-  } = await supabase
+    // ACTIVIDAD
 
-    .from("profiles")
+    const {
+      data: profileData
+    } = await supabase
 
-    .select("full_name")
+      .from("profiles")
 
-    .eq("id", user.id)
+      .select("full_name")
 
-    .single()
+      .eq(
+        "id",
+        user.id
+      )
 
-  await supabase
+      .single()
 
-    .from("activities")
+    await supabase
 
-    .insert({
+      .from("activities")
 
-      pasanaq_id:
-        pasanaq.id,
+      .insert({
 
-      user_id:
-        user.id,
+        pasanaq_id:
+          pasanaq.id,
 
-      type:
-        "member_joined",
+        user_id:
+          user.id,
 
-      message:
+        type:
+          "member_joined",
+
+        message:
 `${profileData?.full_name} se unió al Pasanaq ${pasanaq.name} con ${selectedNumbers} número(s)`,
 
-    })
+      })
 
-  toast.success(
-    "Te uniste al Pasanaq"
-  )
+    toast.success(
+      "Te uniste al Pasanaq"
+    )
 
-  window.location.href =
-    `/pasanaq/${pasanaq.id}`
-}
+    window.location.href =
+      `/pasanaq/${pasanaq.id}`
+  }
 
   if (loading) {
 
@@ -307,6 +354,7 @@ if (existingMember) {
         Cargando invitación...
 
       </div>
+
     )
   }
 
@@ -363,93 +411,113 @@ if (existingMember) {
 
             {pasanaq.description}
 
+          </p>
+
           <MemberNumberSelector
-            selectedNumbers={selectedNumbers}
-            setSelectedNumbers={setSelectedNumbers}
-            pasanaq={pasanaq}
+
+            selectedNumbers={
+              selectedNumbers
+            }
+
+            setSelectedNumbers={
+              setSelectedNumbers
+            }
+
+            payoutMode={
+              payoutMode
+            }
+
+            setPayoutMode={
+              setPayoutMode
+            }
+
+            pasanaq={
+              pasanaq
+            }
+
           />
 
-<button
+          <button
+            onClick={
+              handleJoin
+            }
+            disabled={
+              pasanaq.status ===
+              "active"
+            }
+            className="
+              mt-8
+              w-full
+              bg-savings
+              text-white
+              py-4
+              rounded-xl
+              font-bold
+              disabled:opacity-50
+            "
+          >
 
-  onClick={handleJoin}
+            {
+              pasanaq.status ===
+              "active"
 
-  disabled={pasanaq.status === "active"}
+              ? "Pasanaq en curso"
 
-  className="
-    mt-8
-    w-full
-    bg-savings
-    text-white
-    py-4
-    rounded-xl
-    font-bold
-    disabled:opacity-50
-  "
->
+              : "Unirme al Pasanaq"
+            }
 
-  {
+          </button>
 
-    pasanaq.status === "active"
+          {
+            pasanaq?.status ===
+            "active"
 
-    ? "Pasanaq en curso"
+            && (
 
-    : "Unirme al Pasanaq"
+              <p
+                className="
+                  mt-4
+                  text-center
+                  text-sm
+                  opacity-70
+                "
+              >
 
-  }
+                Este Pasanaq ya comenzó y no
+                acepta nuevos participantes,
+                lo sentimos pero esta es una
+                invitación caducada.
 
-</button>
+              </p>
 
-{
-  pasanaq?.status === "active"
+            )
+          }
 
-  && (
-    <>
+          <button
+            onClick={() =>
+              navigate(
+                "/dashboard"
+              )
+            }
+            className="
+              mt-4
+              w-full
+              bg-silver
+              text-dark
+              py-3
+              rounded-xl
+              transition-colors
+              hover:bg-fintech
+              hover:text-white
+              border
+              border-silver
+              font-semibold
+            "
+          >
 
-    <p
-  className="
-    mt-4
-    text-center
-    text-sm
-    opacity-70
-  "
->
+            Volver al inicio
 
-  Este Pasanaq ya comenzó y no acepta nuevos participantes, lo sentimos pero esta es una invitación caducada.
-
-</p>
-</>
-  )
-}
-
-<button
-
-  onClick={() =>
-
-    navigate("/dashboard")
-  }
-
-  className="
-    mt-4
-    w-full
-    bg-silver
-    text-dark
-    py-3
-    rounded-xl
-    transition-colors
-    hover:bg-fintech
-    hover:text-white
-    border
-    border-silver
-    font-semibold
-  "
->
-
-  Volver al inicio
-
-</button>
-
-
-          </p>
+          </button>
 
         </div>
 
